@@ -75,7 +75,7 @@ def text_in_rect(canvas, text, font, rect, line_spacing=1.1):
                 x = int(rect[0] + (width / 2) - (line_width / 2))
                 bounds[0] = min(bounds[0], x)
                 bounds[2] = max(bounds[2], x + line_width)
-                draw_text_with_outline(canvas, (x, y), line, font, fill=(255,255,255), outline=(0,0,0), stroke_width=1)
+                draw_text_with_outline(canvas, (x, y), line, font, fill=(255,255,255), outline=(0,0,0), stroke_width=2)
                 #canvas.text((x, y), line, font=font)
                 y += line_height
 
