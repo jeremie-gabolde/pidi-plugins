@@ -206,14 +206,14 @@ class DisplayPIL(Display):
         progress = self._progress
         max_progress = 1.0
         colour = (225, 225, 225, 225)
-        rect = (5, 220, 235, 235)
+        rect = (5, 220, self._size - 5, 235)
         draw_progress_bar(self._overlay_draw, progress, max_progress, rect, colour)
 
         # Volume bar
         volume = self._volume
         max_volume = 100
         colour = (225, 225, 225, 165)
-        rect = (5, 185, 205, 190)
+        rect = (5, 185, self._size - 5, 190)
         draw_progress_bar(self._overlay_draw, volume, max_volume, rect, colour)
 
         # Crossfade Album Art
