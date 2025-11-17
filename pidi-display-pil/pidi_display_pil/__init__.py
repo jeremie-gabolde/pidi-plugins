@@ -18,7 +18,8 @@ def text_in_rect(canvas, text, font, rect, line_spacing=1.1):
 
     # Given a rectangle, reflow and scale text to fit, centred
     while font.size > 0:
-        space_width = font.getsize(" ")[0]
+        bbox = font.getbbox(" ")
+        space_width = bbox[2] - bbox[0]
         line_height = int(font.size * line_spacing)
         max_lines = math.floor(height / line_height)
         lines = []
