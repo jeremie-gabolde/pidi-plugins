@@ -111,9 +111,6 @@ class DisplayPIL(Display):
         self._image_album_art = Image.new('RGBA', target_size , (0, 0, 0))
         self._image_album_art_prev = Image.new('RGBA', target_size, (0, 0, 0))
 
-        # Vertical scrolling offset for album art
-        self._art_scroll_offset = 0
-
         self._text = Image.new('RGBA', source_size)
         self._text_draw = ImageDraw.Draw(self._text, 'RGBA')
         self._text_draw.fontmode = '1'
@@ -225,35 +222,6 @@ class DisplayPIL(Display):
         else:
             art = Image.blend(self._image_album_art_prev, self._image_album_art, t_blend)
 
-        # --- Vertical Scrolling Album Art ---
-        # Resize full art to screen width while preserving aspect ratio
-        full_w = self._size
-        full_h = int(art.height * (full_w / art.width))
-        art_scaled = art.resize((full_w, full_h), Image.LANCZOS)
-
-        screen_h = self._size
-
-        # If album art is too short to scroll, duplicate it
-        if full_h < screen_h:
-            tiled = Image.new("RGBA", (full_w, full_h * 2))
-            tiled.paste(art_scaled, (0, 0))
-            tiled.paste(art_scaled, (0, full_h))
-            art_scaled = tiled
-            full_h = art_scaled.height
-
-        # Wrap scroll offset
-        if self._art_scroll_offset >= full_h:
-            self._art_scroll_offset = 0
-
-        top = self._art_scroll_offset
-        bottom = top + screen_h
-
-        # Crop visible scrolling window
-        art_frame = art_scaled.crop((0, top, full_w, bottom))
-
-        # Advance scroll speed (adjust to taste)
-        self._art_scroll_offset += 1  # 1 px/frame
-
         # Add our text layer
         if self._text_1x is not None:
             overlay = Image.alpha_composite(self._overlay, self._text_1x)
@@ -261,7 +229,7 @@ class DisplayPIL(Display):
             overlay = self._overlay
 
         # Overlay combined track info onto album art
-        image = Image.alpha_composite(art_frame, overlay)
+        image = Image.alpha_composite(art, overlay)
 
         self._output_image = image
         return True
