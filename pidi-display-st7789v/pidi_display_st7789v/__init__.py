@@ -24,7 +24,7 @@ class DisplayST7789V(DisplayPIL):
 
         # Initialize display
         self._st7789v = Display(self._rpi)
-        self._st7789v.initialize(90) #rotation=args.rotation or 0)
+        self._st7789v.initialize(rotation=args.rotation or 0)
 
     def start(self):
         """Called when PiDi starts."""
