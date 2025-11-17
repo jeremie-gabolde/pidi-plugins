@@ -12,14 +12,24 @@ except ImportError:
 __version__ = '0.1.0'
 
 
+def _text_width(font, text):
+    """Return width of text using Pillow ≥10 (getbbox replaces getsize)."""
+    if not text:
+        return 0
+    bbox = font.getbbox(text)
+    return bbox[2] - bbox[0]
+
+
 def text_in_rect(canvas, text, font, rect, line_spacing=1.1):
     width = rect[2] - rect[0]
     height = rect[3] - rect[1]
 
     # Given a rectangle, reflow and scale text to fit, centred
     while font.size > 0:
+        # space width
         bbox = font.getbbox(" ")
         space_width = bbox[2] - bbox[0]
+
         line_height = int(font.size * line_spacing)
         max_lines = math.floor(height / line_height)
         lines = []
@@ -30,19 +40,27 @@ def text_in_rect(canvas, text, font, rect, line_spacing=1.1):
         while len(lines) < max_lines and len(words) > 0:
             line = []
 
-            while len(words) > 0 and font.getsize(" ".join(line + [words[0]]))[0] <= width:
-                line.append(words.pop(0))
+            # Fit as many words as possible in current line
+            while len(words) > 0:
+                test_line = " ".join(line + [words[0]])
+                if _text_width(font, test_line) <= width:
+                    line.append(words.pop(0))
+                else:
+                    break
 
             lines.append(" ".join(line))
 
-        if(len(lines)) <= max_lines and len(words) == 0:
-            # Solution is found, render the text.
-            y = int(rect[1] + (height / 2) - (len(lines) * line_height / 2) - (line_height - font.size) / 2)
+        # Success: all words fit
+        if len(lines) <= max_lines and len(words) == 0:
+            # Render the text, vertically centered
+            y = int(rect[1] + (height / 2)
+                    - (len(lines) * line_height / 2)
+                    - (line_height - font.size) / 2)
 
             bounds = [rect[2], y, rect[0], y + len(lines) * line_height]
 
             for line in lines:
-                line_width = font.getsize(line)[0]
+                line_width = _text_width(font, line)
                 x = int(rect[0] + (width / 2) - (line_width / 2))
                 bounds[0] = min(bounds[0], x)
                 bounds[2] = max(bounds[2], x + line_width)
@@ -51,6 +69,7 @@ def text_in_rect(canvas, text, font, rect, line_spacing=1.1):
 
             return tuple(bounds)
 
+        # If failed to fit, reduce font size and retry
         font = ImageFont.truetype(font.path, font.size - 1)
 
 
