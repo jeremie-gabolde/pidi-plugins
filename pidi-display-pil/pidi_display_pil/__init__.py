@@ -124,10 +124,6 @@ class DisplayPIL(Display):
         self._blur = args.blur_album_art
 
         self._image_dir = os.path.join(os.path.dirname(__file__), "images")
-        self.controls_pause = Image.open(
-                os.path.join(self._image_dir, "controls-pause.png")).resize(target_size, resample=Image.LANCZOS).convert("RGBA")
-        self.controls_play = Image.open(
-                os.path.join(self._image_dir, "controls-play.png")).resize(target_size, resample=Image.LANCZOS).convert("RGBA")
 
         self._last_artist = ""
         self._last_title = ""
@@ -231,12 +227,6 @@ class DisplayPIL(Display):
             overlay = Image.alpha_composite(self._overlay, self._text_1x)
         else:
             overlay = self._overlay
-
-        # Overlay control icons
-        if self._state == "play":
-            overlay = Image.alpha_composite(overlay, self.controls_pause)
-        else:
-            overlay = Image.alpha_composite(overlay, self.controls_play)
 
         # Overlay combined track info onto album art
         image = Image.alpha_composite(art, overlay)
