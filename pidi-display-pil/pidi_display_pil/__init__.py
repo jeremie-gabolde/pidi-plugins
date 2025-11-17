@@ -19,6 +19,17 @@ def _text_width(font, text):
     bbox = font.getbbox(text)
     return bbox[2] - bbox[0]
 
+def draw_text_with_outline(draw, xy, text, font, fill=(255,255,255), outline=(0,0,0), stroke_width=2):
+    x, y = xy
+    # 8 surrounding offset positions for outline
+    offs = [-stroke_width, 0, stroke_width]
+    for dx in offs:
+        for dy in offs:
+            if dx != 0 or dy != 0:
+                draw.text((x+dx, y+dy), text, font=font, fill=outline)
+    # Main text
+    draw.text((x, y), text, font=font, fill=fill)
+
 
 def text_in_rect(canvas, text, font, rect, line_spacing=1.1):
     width = rect[2] - rect[0]
@@ -64,7 +75,8 @@ def text_in_rect(canvas, text, font, rect, line_spacing=1.1):
                 x = int(rect[0] + (width / 2) - (line_width / 2))
                 bounds[0] = min(bounds[0], x)
                 bounds[2] = max(bounds[2], x + line_width)
-                canvas.text((x, y), line, font=font)
+                draw_text_with_outline(canvas, (x, y), line, font, fill=(255,255,255), outline=(0,0,0), stroke_width=1)
+                #canvas.text((x, y), line, font=font)
                 y += line_height
 
             return tuple(bounds)
