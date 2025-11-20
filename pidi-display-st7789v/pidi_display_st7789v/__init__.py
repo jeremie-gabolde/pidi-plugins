@@ -1,5 +1,5 @@
 """ST7789V Display plugin for PiDi (Mopidy)."""
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 from st7789v.interface import RaspberryPi
 from st7789v import Display
 from pidi_display_pil import DisplayPIL
@@ -15,8 +15,8 @@ class DisplayST7789V(DisplayPIL):
     def __init__(self, args):
         super().__init__(args)
 
-        # Set GPIO numbering mode
-        GPIO.setmode(GPIO.BCM)  # use BCM numbering (GPIO numbers, not pins)
+        # Set GPIO numbering mode # is it actuelly useful ??
+        #GPIO.setmode(GPIO.BCM)  # use BCM numbering (GPIO numbers, not pins)
 
         # Open SPI interface
         self._rpi = RaspberryPi()
