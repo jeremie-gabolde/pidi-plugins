@@ -3,6 +3,7 @@ import time
 import math
 import os
 
+
 try:
     from pidi.display import Display
 except ImportError:
@@ -109,6 +110,10 @@ class DisplayPIL(Display):
 
         Display.__init__(self, args)
 
+        self._idle_timeout = 30  # seconds
+        self._last_playing_time = time.monotonic()
+        self._display_on = True
+
         from fonts.ttf import RobotoMedium as UserFont
         from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
@@ -210,6 +215,22 @@ class DisplayPIL(Display):
         self._last_volume = self._volume
         self._last_progress = progress_pixels
         self._last_redraw = time.time()
+
+        # handling display on/off
+        now = time.monotonic()
+
+        # Music is playing
+        if self._state == "play":
+            self._last_playing_time = now
+            if not self._display_on:
+                self.start()
+                self._display_on = True
+
+        # Music is NOT playing
+        else:
+            if self._display_on and (now - self._last_playing_time) > self._idle_timeout:
+                self.stop()
+                self._display_on = False
 
         # Initial setup
         self._overlay_draw.rectangle((0, 0, self._size, self._size), (0, 0, 0, 40))
