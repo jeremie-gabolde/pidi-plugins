@@ -26,14 +26,20 @@ class DisplayST7789V(DisplayPIL):
         self._st7789v = Display(self._rpi)
         self._st7789v.initialize(rotation=args.rotation or 0)
 
+
     def start(self):
         """Called when PiDi starts."""
         # Optionally, turn backlight fully on
-        self._st7789v.set_backlight(100)
+        #self._st7789v.set_backlight(100)
+        self.turn_on()
+        self.set_backlight(1)
+
 
     def stop(self):
         """Called when PiDi stops."""
-        self._st7789v.set_backlight
+        #self._st7789v.set_backlight
+        self.turn_off()
+        self.set_backlight(0)
 
     def redraw(self):
         """Draw the current Pillow image to the ST7789V."""
